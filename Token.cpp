@@ -1,5 +1,8 @@
 #include "Token.h"
 
+/*
+ * при токенизации унарный минус заменяется на -- для наглядности
+*/
 double compute(const std::string& token, double one) {
     if (token == "sin") {
         return sin(one);
