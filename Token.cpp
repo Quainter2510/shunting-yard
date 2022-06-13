@@ -55,10 +55,8 @@ void checkCorrect(std::vector<Token> vec) {
         throw std::runtime_error("empty expression");
     }
 
-    if (vec[0].type != Token::Type::LeftBracket &&
-        vec[0].type != Token::Type::Number &&
-        vec[0].type != Token::Type::Function &&
-        vec[0].type != Token::Type::UnaryMinus) {
+    if (vec[0].type == Token::Type::RightBracket ||
+        vec[0].type == Token::Type::Operator) {
         throw std::runtime_error("incorrect expression: start with " + vec[0].token);
     }
 
@@ -125,29 +123,6 @@ void checkCorrect(std::vector<Token> vec) {
     }
 }
 
-int priority(Token& token) {
-    std::string oper = token.token;
-    if (oper == "+" || oper == "-") {
-        return 1;
-    }
-    else if (oper == "*" || oper == "/") {
-        return 2;
-    }
-    else if (oper == "^") {
-        return 3;
-    }
-    else {
-        throw std::runtime_error("incorrect priority token " + oper);
-    }
-}
-
-int associavitity(Token& token) {
-    if (token.token == "^") {
-        return 1;
-    }
-    return 0;
-}
-
 bool isNumber(const std::string& num) {
     bool point = false;
     if (num[0] == '.') {
@@ -201,7 +176,15 @@ void addToken(std::string& token, std::vector<Token>& tokensVector) {
                 return;
             }
         }
-        tokensVector.emplace_back(token, Token::Type::Operator);
+        if (token == "+" || token == "-") {
+            tokensVector.emplace_back(token, Token::Type::Operator, 1);
+        }
+        else if (token == "*" || token == "/") {
+            tokensVector.emplace_back(token, Token::Type::Operator, 2);
+        }
+        else if (token == "^") {
+            tokensVector.emplace_back(token, Token::Type::Operator, 3, Token::Associativity::Right);
+        }
     }
     else {
         throw std::runtime_error("incorrect token " + token);
@@ -268,9 +251,9 @@ std::queue<Token> shuntingYard(std::vector<Token>& tokensVector) {
                     operatorStack.top().type == Token::Type::Function ||
                     operatorStack.top().type == Token::Type::UnaryMinus ||
                     operatorStack.top().type == Token::Type::Operator && (
-                    priority(operatorStack.top()) > priority(token) ||
-                    priority(operatorStack.top()) == priority(token) &&
-                    associavitity(token) == 0))) {
+                    operatorStack.top().priority > token.priority ||
+                    operatorStack.top().priority == token.priority &&
+                    token.associativity == Token::Associativity::Left))) {
                 output.push(operatorStack.top());
                 operatorStack.pop();
             }

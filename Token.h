@@ -1,15 +1,13 @@
-//
-// Created by User on 06.06.2022.
-//
+
+#ifndef SHUNTING_YARD_TOKEN_H
+#define SHUNTING_YARD_TOKEN_H
+
 #include<iostream>
 #include<algorithm>
 #include<cmath>
 #include<vector>
 #include<queue>
 #include<stack>
-#ifndef SHUNTING_YARD_TOKEN_H
-#define SHUNTING_YARD_TOKEN_H
-
 
 struct Token {
 
@@ -21,28 +19,23 @@ struct Token {
         RightBracket,
         UnaryMinus
     };
+    enum class Associativity {
+        Left = 0,
+        Right
+    };
     Type type;
+    int priority;
+    Associativity associativity;
     const std::string token;
-    Token(const std::string s, Type type):
-            type(type), token(s)
+    Token(const std::string s, Type type, int priority = 0, Associativity ass = Associativity::Left):
+            type(type), token(s), associativity(ass), priority(priority)
     {
 
     }
 };
-
-int preority(Token& token);
-int associavitity(Token& token);
-
 void tokenize(const std::string& str, std::vector<Token>&);
-void addToken(std::string& token, std::vector<Token>&);
-bool isOperator(const std::string& oper);
-bool isFunction(const std::string& func);
-bool isNumber(const std::string& num);
 std::queue<Token> shuntingYard(std::vector<Token>&);
 double calculate(std::queue<Token>&);
-double compute(const std::string& token, double one, double two);
-double compute(const std::string& token, double one);
-void checkCorrect(std::vector<Token> vec);
 
 
 

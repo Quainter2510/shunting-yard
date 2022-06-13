@@ -31,7 +31,7 @@ int main() {
                 show.pop();
             }
             std::cout << '\n';
-            std::cout << "Result:  ";
+            std::cout << "Result: ";
             double res = calculate(queue);
             std::cout << res << '\n';
         }
